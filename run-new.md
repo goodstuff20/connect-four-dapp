@@ -1,7 +1,8 @@
 # Replicate deploying and running:
 
-fill .env with MNEMONIC and PROJECT_ID (infura api key)
-
+prerequisites:
+- fill .env with MNEMONIC and PROJECT_ID (infura api key)
+- git config --global url.https://github.com/.insteadOf git://github.com/
 - npm install / npm install --save-dev
 
 migrate, build and deploy:
