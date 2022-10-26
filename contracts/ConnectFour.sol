@@ -1,6 +1,6 @@
-pragma solidity ^0.4.18;
+pragma solidity 0.5.11;
 
-import "../node_modules/openzeppelin-solidity/contracts/payment/PullPayment.sol";
+import "@openzeppelin/contracts/payment/PullPayment.sol";
 //function asyncTransfer(address dest, uint256 amount) internal;
 //function withdrawPayments() public;
 
@@ -47,7 +47,7 @@ contract ConnectFour is PullPayment {
   mapping (uint => GameState) public games;
 
   modifier onlyGameExists(uint gameId) {
-    require(games[gameId].playerOneRed != 0);
+    require(games[gameId].playerOneRed != address(0));
     _;
   }
 
@@ -93,9 +93,9 @@ contract ConnectFour is PullPayment {
     moveTimeout = timeout;
   }
 
-  function() public {
-    revert();
-  }
+  // fallback() external {
+  //   revert();
+  // }
 
   //Creates a game with a unique ID. Anyone can join this game.
   function createNewGame() external payable {
@@ -129,7 +129,7 @@ contract ConnectFour is PullPayment {
     games[gameId].lastTimePlayed = now;
     games[gameId].isStarted = true;
     games[gameId].whoseTurn = BoardPiece.RED;
-    logGameStart(gameId);
+    emit logGameStart(gameId);
   }
 
   //If nobody has joined your game, you can cancel and get money back
@@ -142,9 +142,9 @@ contract ConnectFour is PullPayment {
     games[gameId].isStarted = true;
     games[gameId].gameOver = true;
 
-    asyncTransfer(msg.sender, games[gameId].bid);
+    _asyncTransfer(msg.sender, games[gameId].bid);
 
-    logGameCancel(gameId);
+    emit logGameCancel(gameId);
   }
 
   function forfeit(uint gameId)
@@ -172,7 +172,7 @@ contract ConnectFour is PullPayment {
   }
 
   //The pieces in toClaim must be sorted positions, least to greatest
-  function makeMoveAndClaimVictory(uint gameId, uint8 moveToMake, uint8[4] claim)
+  function makeMoveAndClaimVictory(uint gameId, uint8 moveToMake, uint8[4] calldata claim)
     external
     onlyActivePlayer(gameId)
     onlyWhilePlaying(gameId)
@@ -210,11 +210,11 @@ contract ConnectFour is PullPayment {
       games[gameId].whoseTurn = BoardPiece.RED;
     }
 
-    logMoveMade(gameId, player, position);
+    emit logMoveMade(gameId, player, position);
   }
 
   //Is a set of four pieces a valid victory
-  function checkHasWon(uint gameId, BoardPiece who, uint8[4] moves) constant public returns(bool){
+  function checkHasWon(uint gameId, BoardPiece who, uint8[4] memory moves) view public returns(bool){
     for (uint8 i = 0; i<4; i++){
       require(moves[i] >= 0 && moves[i] <= 41);
       require(games[gameId].board[moves[i]] == who);
@@ -247,44 +247,44 @@ contract ConnectFour is PullPayment {
   }
 
   //Accessor functions per game
-  function getBid(uint gameId) constant public returns(uint) {
+  function getBid(uint gameId) view public returns(uint) {
     return games[gameId].bid;
   }
 
-  function getLastTimePlayed(uint gameId) constant public returns(uint){
+  function getLastTimePlayed(uint gameId) view public returns(uint){
     return games[gameId].lastTimePlayed;
   }
 
-  function getPlayerOne(uint gameId) constant public returns(address){
+  function getPlayerOne(uint gameId) view public returns(address){
     return games[gameId].playerOneRed;
   }
 
-  function getPlayerTwo(uint gameId) constant public returns(address){
+  function getPlayerTwo(uint gameId) view public returns(address){
     return games[gameId].playerTwoBlack;
   }
 
-  function getBoard(uint gameId) constant public returns(BoardPiece[42]){
+  function getBoard(uint gameId) view public returns(BoardPiece[42] memory){
     return games[gameId].board;
   }
 
-  function getWhoseTurn(uint gameId) constant public returns(BoardPiece){
+  function getWhoseTurn(uint gameId) view public returns(BoardPiece){
     return games[gameId].whoseTurn;
   }
 
-  function getRestricted(uint gameId) constant public returns(bool){
+  function getRestricted(uint gameId) view public returns(bool){
     return games[gameId].restricted;
   }
 
-  function getIsStarted(uint gameId) constant public returns(bool){
+  function getIsStarted(uint gameId) view public returns(bool){
     return games[gameId].isStarted;
   }
 
-  function getGameOver(uint gameId) constant public returns(bool){
+  function getGameOver(uint gameId) view public returns(bool){
     return games[gameId].gameOver;
   }
 
   //Player that is currently going
-  function getActivePlayer(uint gameId) constant internal returns(address){
+  function getActivePlayer(uint gameId) view internal returns(address){
     BoardPiece player = games[gameId].whoseTurn;
 
     if (player == BoardPiece.RED) {
@@ -297,7 +297,7 @@ contract ConnectFour is PullPayment {
   }
 
   //Player that is currently not going
-  function getInactivePlayer(uint gameId) constant internal returns(address){
+  function getInactivePlayer(uint gameId) view internal returns(address){
     BoardPiece player = games[gameId].whoseTurn;
 
     if (player == BoardPiece.RED) {
@@ -318,7 +318,7 @@ contract ConnectFour is PullPayment {
   function createNewGameEntry(uint gameId) private{
     games[gameId].bid = msg.value;
     games[gameId].playerOneRed = msg.sender;
-    logGameCreated(gameId, false);
+    emit logGameCreated(gameId, false);
   }
 
   //Helper function for game end
@@ -326,9 +326,9 @@ contract ConnectFour is PullPayment {
     games[gameId].gameOver = true;
     uint256 payout = games[gameId].bid * 2;
 
-    asyncTransfer(winner, payout);
+    _asyncTransfer(winner, payout);
 
-    logGameEnd(gameId, winner);
+    emit logGameEnd(gameId, winner);
   }
 
 }

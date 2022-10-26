@@ -11,6 +11,7 @@
     "build": "truffle compile && webpack",
     "webpack": "webpack",
     "dev": "truffle deploy --network ganache && webpack-dev-server",
+    "webpack-dev": "webpack-dev-server",
     "test": "truffle deploy --network ganache && truffle test --network ganache",
     "deploy-ropsten": "npm run clean && truffle compile && truffle migrate --network ropsten && webpack",
     "windev": "truffle.cmd deploy --network ganache && webpack-dev-server",
@@ -27,29 +28,31 @@
   },
   "homepage": "https://github.com/dmelcer9/connect-four-dapp#readme",
   "dependencies": {
+    "@openzeppelin/contracts": "^2.5.1",
+    "@truffle/hdwallet-provider": "^2.1.0",
     "moment": "^2.22.2",
-    "openzeppelin-solidity": "^1.5.0",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "truffle": "^4.1.14",
     "truffle-hdwallet-provider": "0.0.3",
     "w3-css": "^4.1.0",
-    "web3": "^1.0.0-beta.36",
-    "zeppelin-solidity": "^1.12.0"
+    "web3": "^1.0.0-beta.36"
   },
   "devDependencies": {
+    "@webpack-cli/serve": "^1.7.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
     "babel-preset-react": "^6.24.1",
     "copy-webpack-plugin": "^4.6.0",
     "css-loader": "^0.28.11",
     "extract-text-webpack-plugin": "^3.0.2",
-    "ganache-cli": "^6.2.3",
+    "ganache": "*",
     "prop-types": "^15.6.2",
     "style-loader": "^0.19.1",
     "truffle-contract": "^3.0.6",
     "truffle-solidity-loader": "0.0.8",
     "webpack": "^3.12.0",
+    "webpack-cli": "3.1.2",
     "webpack-dev-server": "^2.11.3"
   }
 }

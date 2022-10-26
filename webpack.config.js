@@ -22,8 +22,6 @@ module.exports = {
     new CopyWebpackPlugin([
       { from: './app/index.html', to: "index.html" },
       { from: './app/style', to: "style"},
-      { from: './app/images', to: "images" },
-      { from: './app/fonts', to: "fonts" },
 
     ]),
     new ExtractTextPlugin("app.css")
