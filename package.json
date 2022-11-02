@@ -11,7 +11,7 @@
     "build": "truffle compile && webpack",
     "webpack": "webpack",
     "dev": "truffle deploy --network ganache && webpack-dev-server",
-    "webpack-dev": "webpack-dev-server",
+    "webpack-dev": "webpack-dev-server --host 0.0.0.0 --port 80",
     "test": "truffle deploy --network ganache && truffle test --network ganache",
     "deploy-ropsten": "npm run clean && truffle compile && truffle migrate --network ropsten && webpack",
     "windev": "truffle.cmd deploy --network ganache && webpack-dev-server",
