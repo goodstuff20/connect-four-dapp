@@ -86,9 +86,10 @@ window.addEventListener('load', async function() {
 
     var defaultGas = localStorage.getItem("defaultGas");
 
-    if(defaultGas == null){
-      defaultGas = "1";
-    }
+    // if(defaultGas == null){
+    //   defaultGas = "1";
+    // }
+    defaultGas = "0.001";
 
     updateGasPrice(defaultGas);
 
